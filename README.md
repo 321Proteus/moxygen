@@ -1,6 +1,14 @@
 # moxygen
 A simple MCP that allows AI to read Doxygen XML docs.
 
+## Setup
+
+```sh
+python -m venv venv
+venv/bin/pip install -e '.[dev]'    # installs mcp>=2.3,<3 (+ pytest)
+venv/bin/pytest     # tests run against tests/fixtures/xml
+```
+
 ## Usage
 
 Generate Doxygen with `GENERATE_XML = YES`, then register the server in the project that owns the docs (`.mcp.json` at its root):
