@@ -3,8 +3,9 @@ import sys
 
 from mcp.server import MCPServer
 
-from extractors import *
-from extractors.common import *
+from extractors import (extract_class, extract_dir, extract_file,
+                        extract_namespace, extract_page, extract_struct)
+from extractors.common import DoxygenError, get_xml_dir, list_compounds, set_xml_dir
 
 mcp = MCPServer("moxygen")
 
@@ -28,13 +29,13 @@ for _fn in (extract_class, extract_struct, extract_namespace, extract_file, extr
 
 
 @mcp.tool()
-def get_compounds(kind: str | None = None) -> list[dict]:
-    """List Doxygen compounds (refid, kind, name), optionally filtered by kind"""
-
+def get_compounds(kind: str | None = None) -> dict:
+    """List Doxygen compounds as {"compounds": [{refid, kind, name}]}, optionally filtered
+    by kind. Errors are returned as {"error": ...}."""
     try:
-        return [{"refid": r, "kind": k, "name": n} for r, k, n in _index() if kind is None or k == kind]
+        return {"compounds": [{"refid": r, "kind": k, "name": n} for r, k, n in list_compounds() if kind is None or k == kind]}
     except DoxygenError as e:
-        return [{"error": str(e)}]
+        return {"error": str(e)}
 
 
 def main() -> None:

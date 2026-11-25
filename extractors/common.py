@@ -22,23 +22,19 @@ def get_xml_dir() -> Path:
     Resolved on every call so the server notices a directory that appears later,
     and relative paths follow the project the server was launched in.
     """
-    tried = []
-    candidates = [("--xml-dir", _explicit), (f"${ENV_VAR}", os.environ.get(ENV_VAR)), ("./docs/xml", DEFAULT_REL)]
-    
-    for label, value in candidates:
-        if not value:
-            continue
+    explicit = [("--xml-dir", _explicit), (f"${ENV_VAR}", os.environ.get(ENV_VAR))]
+    for label, value in explicit:
+        if value:
+            # An explicit setting that is wrong is an error, not a reason to guess elsewhere.
+            path = Path(value).expanduser().resolve()
+            if (path / "index.xml").is_file():
+                return path
+            raise DoxygenError(f"No index.xml in {label} -> {path}")
 
-        path = Path(value).expanduser().resolve()
-        if (path / "index.xml").is_file():
-            return path
-
-        tried.append(f"{label} -> {path}")
-        if label != "./docs/xml" and value is not None:
-            break  # an explicit setting that is wrong
-
-    raise DoxygenError("No Doxygen XML index (index.xml) found. Tried: " + "; ".join(tried)
-                       + f". Pass --xml-dir or set {ENV_VAR}.")
+    path = DEFAULT_REL.resolve()
+    if (path / "index.xml").is_file():
+        return path
+    raise DoxygenError(f"No Doxygen XML found at {path}. Pass --xml-dir or set {ENV_VAR}.")
 
 
 class DoxygenError(Exception):
@@ -51,7 +47,7 @@ def _parse_index(path: Path, mtime: float) -> list[tuple[str, str, str]]:
     return [(c.get("refid"), c.get("kind"), c.findtext("name", default="")) for c in root.findall("compound")]
 
 
-def _index() -> list[tuple[str, str, str]]:
+def list_compounds() -> list[tuple[str, str, str]]:
     """(refid, kind, name) for every compound; re-read when index.xml changes on disk."""
     
     path = get_xml_dir() / "index.xml"
@@ -61,25 +57,30 @@ def _index() -> list[tuple[str, str, str]]:
         raise DoxygenError(f"XML parse error in {path}: {e}") from e
 
 
-def resolve_refid(ref: str, kind: str | None = None) -> str:
-    """Accept either a refid or a (qualified) name and return the refid."""
+Kinds = str | tuple[str, ...] | None
 
-    entries = [e for e in _index() if kind is None or e[1] == kind]
 
-    for refid, _, name in entries:
+def resolve_refid(ref: str, kind: Kinds = None) -> str:
+    """Accept a refid or a (qualified) name and return the refid.
+
+    With `kind`, only compounds of that kind (or any of a tuple of kinds) are
+    considered, so a class and a namespace sharing a name don't shadow each other.
+    """
+    kinds = (kind,) if isinstance(kind, str) else kind
+    entries = [e for e in list_compounds() if kinds is None or e[1] in kinds]
+
+    for refid, _, _ in entries:
         if refid == ref:
             return refid
-
     for refid, _, name in entries:
         if name == ref:
             return refid
-
-    raise DoxygenError(f"No {kind or 'compound'} matching '{ref}'")
+    wanted = " or ".join(kinds) if kinds else "compound"
+    raise DoxygenError(f"No {wanted} matching '{ref}'")
 
 
 def load_compounddef(ref: str, kind: str | tuple[str, ...]) -> etree.Element:
-    kinds = (kind,) if isinstance(kind, str) else kind
-    refid = resolve_refid(ref)
+    refid = resolve_refid(ref, kind)
     path = get_xml_dir() / f"{refid}.xml"
 
     if not path.exists():
@@ -93,10 +94,11 @@ def load_compounddef(ref: str, kind: str | tuple[str, ...]) -> etree.Element:
     cd = root.find("compounddef")
     if cd is None:
         raise DoxygenError(f"Incorrect Doxygen XML structure for '{refid}'")
-    if cd.get("kind") not in kinds:
-        raise DoxygenError(f"'{refid}' is a {cd.get('kind')}, expected {' or '.join(kinds)}")
 
     return cd
+
+
+_BLOCK_TAGS = {"para", "listitem", "title", "row", "entry", "term", "simplesect", "programlisting", "codeline"}
 
 
 def text(el: etree.Element | None) -> str:
@@ -105,18 +107,41 @@ def text(el: etree.Element | None) -> str:
     if el is None:
         return ""
 
-    return " ".join("".join(el.itertext()).split())
+    parts: list[str] = []
+
+    def walk(node: etree.Element) -> None:
+        parts.append(node.text or "")
+        for child in node:
+            walk(child)
+            if child.tag in _BLOCK_TAGS:
+                parts.append(" ")  # keep adjacent items ("one", "two") from fusing
+            parts.append(child.tail or "")
+
+    walk(el)
+    return " ".join("".join(parts).split())
 
 
 def paragraphs(el: etree.Element | None) -> str:
-    """Like text() but keeps <para> boundaries as blank lines."""
+    """Flatten a description into blocks separated by blank lines.
 
+    Each outermost <para> becomes one block (lists and other nested content stay
+    inside it, flattened). <sectN> titles become markdown-style headings.
+    """
     if el is None:
         return ""
+    blocks: list[str] = []
 
-    paras = [text(p) for p in el.iter("para")]
-    # Nested paras (lists, etc.) repeat their text, fall back to flat text then
-    return "\n\n".join(p for p in paras if p) if el.find("para") is None or len(paras) == len(el.findall("para")) else text(el)
+    def walk(node: etree.Element) -> None:
+        for child in node:
+            if child.tag == "para":
+                blocks.append(text(child))  # do not descend: nested paras are already included
+            elif child.tag == "title" and node.tag.startswith("sect"):
+                blocks.append("#" * int(node.tag[-1]) + " " + text(child))
+            elif child.tag != "title":
+                walk(child)
+
+    walk(el)
+    return "\n\n".join(b for b in blocks if b)
 
 
 def location(cd: etree.Element) -> dict:
