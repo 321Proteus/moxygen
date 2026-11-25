@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen version="1.18.0">
+  <compounddef id="ab/classdemo_1_1Config" kind="class" language="C++" prot="public">
+    <compoundname>demo::Config</compoundname>
+    <basecompoundref refid="structdemo_1_1Point" prot="public" virt="non-virtual">demo::Point</basecompoundref>
+    <templateparamlist><param><type>typename T</type><defval>int</defval></param></templateparamlist>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="ab/classdemo_1_1Config_1a1" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool demo::Config::load</definition>
+        <argsstring>(const char *path, int flags=0)</argsstring>
+        <name>load</name>
+        <param><type>const char *</type><declname>path</declname></param>
+        <param><type>int</type><declname>flags</declname><defval>0</defval></param>
+        <briefdescription><para>Load a file.</para></briefdescription>
+        <detaileddescription></detaileddescription>
+        <location file="src/demo/config.hpp" line="12"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription><para>Runtime configuration.</para></briefdescription>
+    <detaileddescription><para>First paragraph.</para><para>Second paragraph.</para></detaileddescription>
+    <location file="src/demo/config.hpp" line="10"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen version="1.18.0">
+  <compounddef id="dir_1" kind="dir">
+    <compoundname>src/demo</compoundname>
+    <innerdir refid="dir_1">sub</innerdir>
+    <innerfile refid="util_8hpp">util.hpp</innerfile>
+    <briefdescription></briefdescription><detaileddescription></detaileddescription>
+    <location file="src/demo/"/>
+  </compounddef>
+</doxygen>

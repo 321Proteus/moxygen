@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen version="1.18.0">
+  <compounddef id="util_8hpp" kind="file" language="C++">
+    <compoundname>util.hpp</compoundname>
+    <includes local="no">vector</includes>
+    <includedby refid="util_8hpp" local="yes">main.cpp</includedby>
+    <innernamespace refid="namespacedemo_1_1Config">demo::Config</innernamespace>
+    <briefdescription><para>Utilities.</para></briefdescription>
+    <detaileddescription></detaileddescription>
+    <programlisting><codeline><highlight class="normal">int x;</highlight></codeline></programlisting>
+    <location file="src/demo/util.hpp"/>
+  </compounddef>
+</doxygen>

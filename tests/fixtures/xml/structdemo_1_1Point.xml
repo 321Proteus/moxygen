@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen version="1.18.0">
+  <compounddef id="structdemo_1_1Point" kind="struct" language="C++" prot="public">
+    <compoundname>demo::Point</compoundname>
+    <derivedcompoundref refid="ab/classdemo_1_1Config" prot="public" virt="non-virtual">demo::Config</derivedcompoundref>
+    <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structdemo_1_1Point_1x" prot="public" static="no" mutable="no">
+        <type>int</type><definition>int demo::Point::x</definition><argsstring></argsstring>
+        <name>x</name><initializer>= 0</initializer>
+        <briefdescription></briefdescription><detaileddescription></detaileddescription>
+        <location file="src/demo/point.hpp" line="5"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription><para>A point.</para></briefdescription>
+    <detaileddescription></detaileddescription>
+    <location file="src/demo/point.hpp" line="4"/>
+  </compounddef>
+</doxygen>

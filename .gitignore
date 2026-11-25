@@ -2,3 +2,5 @@ venv/
 docs/
 __pycache__/
 .vscode/
+*.egg-info/
+.pytest_cache/

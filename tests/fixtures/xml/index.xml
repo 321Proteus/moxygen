@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex version="1.18.0">
+  <compound refid="namespacedemo_1_1Config" kind="namespace"><name>demo::Config</name></compound>
+  <compound refid="ab/classdemo_1_1Config" kind="class"><name>demo::Config</name>
+    <member refid="ab/classdemo_1_1Config_1a1" kind="function"><name>load</name></member>
+  </compound>
+  <compound refid="structdemo_1_1Point" kind="struct"><name>demo::Point</name></compound>
+  <compound refid="util_8hpp" kind="file"><name>util.hpp</name></compound>
+  <compound refid="dir_1" kind="dir"><name>src/demo</name></compound>
+  <compound refid="indexpage" kind="page"><name>index</name></compound>
+</doxygenindex>

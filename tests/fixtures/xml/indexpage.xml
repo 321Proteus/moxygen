@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen version="1.18.0">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>Demo</title>
+    <briefdescription></briefdescription>
+    <detaileddescription>
+<para>Intro text.</para>
+<sect1 id="s1"><title>Features</title>
+<para>Outer para: <itemizedlist><listitem><para>one</para></listitem><listitem><para>two</para></listitem></itemizedlist></para>
+<sect2 id="s2"><title>Details</title><para>Deep text.</para></sect2>
+</sect1>
+    </detaileddescription>
+    <location file="index.md"/>
+  </compounddef>
+</doxygen>

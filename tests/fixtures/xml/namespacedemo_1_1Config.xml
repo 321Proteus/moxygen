@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen version="1.18.0">
+  <compounddef id="namespacedemo_1_1Config" kind="namespace" language="C++">
+    <compoundname>demo::Config</compoundname>
+    <innerclass refid="structdemo_1_1Point" prot="public">demo::Point</innerclass>
+    <briefdescription><para>Namespace sharing a name with a class.</para></briefdescription>
+    <detaileddescription></detaileddescription>
+    <location file="src/demo/config.hpp" line="3"/>
+  </compounddef>
+</doxygen>
